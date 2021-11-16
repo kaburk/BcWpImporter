@@ -147,7 +147,7 @@ class BcWpImportersController extends AppController {
 		}
 
 		if (isset($xmlItems)) {
-			if (!isset($xmlItems[0])) {
+			if (is_array($xmlItems) && !isset($xmlItems[0])) {
 				$workArray = $xmlItems;
 				$xmlItems = [];
 				$xmlItems[0] = $workArray;
@@ -226,7 +226,7 @@ class BcWpImportersController extends AppController {
 			//$this->log($xml['category'], LOG_DEBUG);
 
 			// ブログカテゴリの場合
-			if (!isset($xml['category'][0])) {
+			if (is_array($xml['category']) && !isset($xml['category'][0])) {
 				$workArray = $xml['category'];
 				$xml['category'] = [];
 				$xml['category'][0] = $workArray;
@@ -311,29 +311,32 @@ class BcWpImportersController extends AppController {
 			// ブログタグ
 			foreach ($xml['category'] as $key => $item) {
 				if ($item['@domain'] === 'post_tag') {
-					if (isset($category['@'])) {
-						$tagName = mb_substr($category['@'], 0, 100);
-						// タグのチェック
-						$this->BlogTag->cacheQueries = false;
-						$tagData = $this->BlogTag->find('first', [
-							'conditions' => [
-								'BlogTag.name' => $tagName,
-							],
-							'recursive' => -1,
-							'cache' => false,
-						]);
-						if (isset($tagData['BlogTag']['id'])) {
-							$data['BlogTag']['BlogTag'][] = $tagData['BlogTag']['id'];
-						} else {
-							// なければタグを新規追加
-							$tagData['BlogTag'] = [];
-							$tagData['BlogTag']['name'] = $tagName;
-							$this->BlogTag->create($tagData);
-							$ret = $this->BlogTag->save($tagData, false);
+					if (isset($item['@'])) {
+						$tagName = mb_substr($item['@'], 0, 100);
+					} else {
+						$id = $this->BlogCategory->getMax('id') + 1;
+						$tagName = 'tag-' . $id;
+					}
+					// タグのチェック
+					$this->BlogTag->cacheQueries = false;
+					$tagData = $this->BlogTag->find('first', [
+						'conditions' => [
+							'BlogTag.name' => $tagName,
+						],
+						'recursive' => -1,
+						'cache' => false,
+					]);
+					if (isset($tagData['BlogTag']['id'])) {
+						$data['BlogTag']['BlogTag'][] = $tagData['BlogTag']['id'];
+					} else {
+						// なければタグを新規追加
+						$tagData['BlogTag'] = [];
+						$tagData['BlogTag']['name'] = $tagName;
+						$this->BlogTag->create($tagData);
+						$ret = $this->BlogTag->save($tagData, false);
 
-							$tagId = $this->BlogTag->getLastInsertID();
-							$data['BlogTag']['BlogTag'][] = $tagId;
-						}
+						$tagId = $this->BlogTag->getLastInsertID();
+						$data['BlogTag']['BlogTag'][] = $tagId;
 					}
 				}
 			}
@@ -393,7 +396,7 @@ class BcWpImportersController extends AppController {
 
 		// コメント
 		if (isset($xml['wp:comment'])) {
-			if (!isset($xml['wp:comment'][0])) {
+			if (is_array($xml['wp:comment']) && !isset($xml['wp:comment'][0])) {
 				$workArray = $xml['wp:comment'];
 				$xml['wp:comment'] = [];
 				$xml['wp:comment'][0] = $workArray;
