@@ -211,6 +211,12 @@ class BcWpImportersController extends AppController {
 				$xml['content:encoded']
 			);
 			$data['BlogPost']['detail'] = nl2br($xml['content:encoded']);
+			// $data['BlogPost']['detail'] =
+			// 	'<div data-bgb="wysiwyg" class="bgb-wysiwyg">' .
+			// 	'<div data-bgt="ckeditor" data-bgt-ver="2.1.0" class="bgt-container bgt-ckeditor-container">' .
+			// 	'<div class="bge-ckeditor" data-bge="ckeditor">' .
+			// 	$data['BlogPost']['detail'] .
+			// 	'</div></div></div>';
 		} else {
 			$data['BlogPost']['detail'] = '';
 		}
