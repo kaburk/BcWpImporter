@@ -2,6 +2,8 @@
 
 WordPress の投稿データを baserCMS 4 系 のブログへ取り込みます。
 
+※ baserCMS5系版は [BcWpImport](https://github.com/kaburk/BcWpImport/) [BcWpExport](https://github.com/kaburk/BcWpExport/) をご利用ください。
+
 カスタマイズされた WordPress などには対応しておりません。
 必要に応じてソースコードを見てご自身でカスタマイズしてください。
 
